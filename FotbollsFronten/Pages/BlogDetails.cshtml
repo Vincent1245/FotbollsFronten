@@ -1,0 +1,70 @@
+﻿@page "{id:int}"
+@model FotbollsFronten.Pages.BlogDetailsModel
+@* @{
+    ViewData["Title"] = Model.Blog.Header;
+} *@
+
+<h1>@Model.Blog.Header</h1>
+<img src="~/userImages/@Model.Blog.Image" alt="Blog Image" />
+<p>@Model.Blog.Text</p>
+<p><small>@Model.Blog.Date</small></p>
+
+<hr />
+
+<h3>Kommentarer</h3>
+@if (Model.Comments != null && Model.Comments.Any())
+{
+    @foreach (var comment in Model.Comments)
+    {
+        string username = Model.Users.Where(e => e.Id == comment.UserId).SingleOrDefault().UserName;
+        
+        <div class="comment">
+            <p><strong>@username</strong> @comment.CommentDate.ToString("g")</p>
+            <p>@comment.Text</p>
+
+            @if (Model.CurrentUserId == comment.UserId)
+            {
+                <form method="post" asp-page-handler="DeleteComment" asp-route-commentId="@comment.Id">
+                    <button type="submit" class="btn btn-primary">Ta bort</button>
+                </form>
+            }
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form method="post" asp-page-handler="Report" asp-route-commentId="@comment.Id">
+                    <div class="form-group">
+                        <label for="reason-@comment.Id">Anledning</label>
+                        <input type="text" id="reason-@comment.Id" asp-for="NewReport.Reason" class="form-control" />
+                        <span asp-validation-for="NewReport.Reason" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Rapportera</button>
+                </form>
+            }
+        </div>
+
+        <hr />
+
+        
+    }
+
+}
+else
+{
+   <p>Inga kommentarer än.</p>
+}
+
+
+@if (User.Identity.IsAuthenticated)
+{
+    <form method="post">
+        <div class="form-group">
+            <label for="NewCommentText">Kommentar</label>
+            <textarea id="NewCommentText" asp-for="NewComment.Text" class="form-control"></textarea>
+            <span asp-validation-for="NewComment.Text" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Skicka</button>
+    </form>
+}
+else
+{
+    <p>Du måste vara inloggad för att lämna en kommentar.</p>
+}

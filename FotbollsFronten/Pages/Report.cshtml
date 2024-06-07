@@ -1,0 +1,36 @@
+﻿@page
+@model FotbollsFronten.Pages.ReportModel
+@inject SignInManager<IdentityUser> SignInManager
+@{
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="row">
+        @if (Model.Reports != null)
+        {
+          
+            @foreach (var report in Model.Reports)
+            {
+           
+                <div class="card m-2" style="width: 40rem">
+                    <div class="card-body">
+                        <h3 class="card-title">@report.Reason</h3>
+                        <p class="card-text">@report.UserId</p>
+                        <p class="card-footer">@report.CreatedAt.</p>
+
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Det finns inga rapporterade kommentarer att visa.</p>
+        }
+    </div>
+
+
+
+
+
+}
